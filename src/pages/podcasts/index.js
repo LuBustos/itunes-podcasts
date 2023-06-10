@@ -27,7 +27,7 @@ function Podcasts() {
 
   const goToDetail = (podcastId, summary) => {
     set_summary(summary);
-    // navigate(`/podcast/${podcastId}`)
+    navigate(`/podcast/${podcastId}`)
   };
 
   return (

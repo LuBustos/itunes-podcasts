@@ -1,0 +1,33 @@
+.about {
+  flex-direction: column;
+  align-items: center;
+}
+
+.containerImage {
+  text-align: center;
+  padding-top: 10px;
+}
+
+.image {
+  width: 100px;
+  height: 100px;
+}
+
+.title {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.by {
+  line-height: 0px;
+  font-size: 11px;
+}
+
+.containerText {
+  padding: 10px;
+}
+
+.description {
+  font-size: 10px;
+  color: grey;
+}
