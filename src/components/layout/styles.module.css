@@ -1,4 +1,26 @@
 .title {
-    color: #64B5F6;
-    cursor: pointer;
+  color: #64b5f6;
+  cursor: pointer;
+}
+
+.layout {
+  display: flex;
+  align-items: center;
+}
+
+.loadingContainer {
+  margin-left: auto;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
+  100% {
+    transform: rotate(360deg);
+  }
+}

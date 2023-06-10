@@ -30,7 +30,6 @@ function PodcastId() {
   const state = useStore((state) => state);
   const params = useParams();
   const { pathname } = useLocation();
-  console.log(params);
   const navigate = useNavigate()
   const [podcastDetail, setPodcastDetail] = useState(null);
 
@@ -112,7 +111,7 @@ function PodcastId() {
                               det.episodeUrl
                             )
                           }
-                          href={`${pathname}/episode/${det.trackId}`}
+                          to={`${pathname}/episode/${det.trackId}`}
                         >
                           <td>{det.trackName}</td>
                         </Link>

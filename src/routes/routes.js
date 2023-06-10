@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "../components/layout/index";
-import { Podcasts,AboutPodcast } from "../pages/";
+import { Podcasts,AboutPodcast,Episode } from "../pages/";
 
 export const router = createBrowserRouter([
   {
@@ -13,6 +13,10 @@ export const router = createBrowserRouter([
       {
         path: "/podcast/:id",
         element: <AboutPodcast />
+      },
+      {
+        path: "/podcast/:id/episode/:id",
+        element: <Episode />
       }
     ],
   },
