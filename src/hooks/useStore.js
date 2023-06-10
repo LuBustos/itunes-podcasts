@@ -1,21 +1,40 @@
 import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
-export const useStore = create((set) => ({
-  podcastId: 0,
+const initialState = {
+  lastFechtTime: null,
   loading: false,
   summary: "",
   podcast_title: "",
   podcast_description: "",
   song: "",
   podcast_detail: "",
-  set_podcastId: (podcastId) => set(() => ({ podcastId: podcastId })),
-  set_summary: (summary) => set(() => ({ summary: summary })),
-  set_podcast_title: (podcast_title) =>
-    set(() => ({ podcast_title: podcast_title })),
-  set_podcast_description: (podcast_description) =>
-    set(() => ({ podcast_description: podcast_description })),
-  set_song: (song) => set(() => ({ song: song })),
-  set_podcast_detail: (podcast_detail) =>
-    set(() => ({ podcast_detail: podcast_detail })),
-  set_loading: (loading) => set(() => ({ loading: loading })),
-}));
+  podcasts: null,
+};
+
+export const useStore = create(
+  persist(
+    (set, get) => ({
+      ...initialState,
+      set_summary: (summary) => set(() => ({ summary: summary })),
+      set_loading: (loading) => set(() => ({ loading: loading })),
+      addLastFechTime: (last_fetch_time, podcasts) =>
+        set(() => ({ lastFechtTime: last_fetch_time, podcasts: podcasts })),
+      addPodcasts: (podcasts) => set(() => ({ podcasts: podcasts })),
+      addEpisode: (episode) =>
+        set(() => ({
+          song: episode.song,
+          podcast_description: episode.description,
+          podcast_detail: episode.detail,
+          podcast_title: episode.title,
+        })),
+      clear: () => {
+        set(initialState);
+      },
+    }),
+    {
+      name: "podcast-storage", // name of the item in the storage (must be unique)
+      storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
+    }
+  )
+);

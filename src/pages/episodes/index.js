@@ -16,19 +16,25 @@ const EpisodeId = () => {
       podcast_detail.length === 0 ||
       podcast_title.length === 0
     ) {
-        navigate("/");
+      navigate("/");
     }
   }, []);
+
+  const back = () => {
+    navigate(-1);
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
       <div style={{ width: "20%" }}>
-        <PodcastDetail podcast={podcast_detail} summary={summary} />
+        <PodcastDetail podcast={podcast_detail} summary={summary} back={back} />
       </div>
       <div style={{ width: "80%" }}>
         <Card>
           <div className={styles.container}>
-            <h3 className={styles.title}>{podcast_title}</h3>
+            <h3 className={styles.title} onClick={back}>
+              {podcast_title}
+            </h3>
             <span
               className={styles.description}
               dangerouslySetInnerHTML={{ __html: podcast_description }}

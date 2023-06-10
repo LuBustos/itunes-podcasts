@@ -1,11 +1,14 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
 import { useStore } from "../../hooks/useStore";
 import { FaSpinner } from "react-icons/fa";
 
 function Layout() {
-  const loading = useStore((state) => state.loading);
-  const goToHome = () => {};
+  const { loading } = useStore((state) => state);
+  const navigate = useNavigate();
+  const goToHome = () => {
+    navigate("/");
+  };
 
   return (
     <>

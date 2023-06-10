@@ -6,7 +6,7 @@ import { useStore } from "../../hooks/useStore";
 import { useNavigate } from "react-router-dom";
 
 function Podcasts() {
-  const { set_summary, set_loading } = useStore((state) => state);
+  const { set_summary, set_loading, clear } = useStore((state) => state);
   const [podcasts, setPodcasts] = useState(null);
   const navigate = useNavigate();
 
@@ -18,6 +18,8 @@ function Podcasts() {
   };
 
   useEffect(() => {
+    clear();
+
     set_loading(true);
     setTimeout(() => {
       getPodcasts();
@@ -27,7 +29,7 @@ function Podcasts() {
 
   const goToDetail = (podcastId, summary) => {
     set_summary(summary);
-    navigate(`/podcast/${podcastId}`)
+    navigate(`/podcast/${podcastId}`);
   };
 
   return (

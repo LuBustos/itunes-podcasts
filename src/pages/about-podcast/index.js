@@ -20,43 +20,49 @@ const columns = [
   },
 ];
 
-/**
- Una vez obtenido el detalle de un podcast desde el servicio externo por primera
-vez, se deberá almacenar en cliente de manera que solo se vuelva a solicitar si ha
-pasado un día desde la última vez que se solicitó.
- */
+const isTimeElapsed = (lastTime, interval) => {
+  const currentTime = new Date().getTime();
+  return currentTime - lastTime >= interval;
+};
 
 function PodcastId() {
   const state = useStore((state) => state);
   const params = useParams();
   const { pathname } = useLocation();
-  const navigate = useNavigate()
-  const [podcastDetail, setPodcastDetail] = useState(null);
+  const navigate = useNavigate();
+  const [podcastDetail, setPodcastDetail] = useState(state.podcasts);
 
-  const getPodcastAbout = async () => {
+  const getPodcastAbout = async (currentTimestamp) => {
     const data = await getData(
       `https://itunes.apple.com/lookup?id=${params.id}&media=podcast&entity=podcastEpisode&limit=20`
     );
     setPodcastDetail(data);
+    state.addLastFechTime(currentTimestamp, data);
   };
 
   useEffect(() => {
-    const { set_loading, summary } = state;
+    const { set_loading, summary, lastFechtTime } = state;
     if (summary.length === 0) {
       navigate("/");
     }
-    set_loading(true);
-    setTimeout(() => {
-      getPodcastAbout();
-      set_loading(false);
-    }, 300);
+
+    if (!lastFechtTime || isTimeElapsed(lastFechtTime, 2 * 60 * 60 * 1000)) {
+      set_loading(true);
+      setTimeout(() => {
+        const currentTimestamp = new Date().getTime();
+        getPodcastAbout(currentTimestamp);
+        set_loading(false);
+      }, 300);
+    }
   }, []);
 
   const goToEpisode = (trackName, description, episodeUrl) => {
-    state.set_podcast_title(trackName);
-    state.set_podcast_description(description);
-    state.set_song(episodeUrl);
-    state.set_podcast_detail(podcastDetail?.results[0]);
+    state.addEpisode({
+      song: episodeUrl,
+      description: description,
+      title: trackName,
+      detail: podcastDetail?.results[0],
+    });
   };
 
   return (
