@@ -17,14 +17,15 @@ function Podcasts() {
     podcasts,
   } = state;
   const [allPodcast, setAllPodcast] = useState(podcasts);
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   const getPodcasts = async (currentTimestamp) => {
     const data = await getData(
       "https://itunes.apple.com/us/rss/toppodcasts/limit=100/genre=1310/json"
     );
-    setAllPodcast(data);
-    addLastFechTimePodcasts(currentTimestamp, data);
+    setAllPodcast(data.feed.entry);
+    addLastFechTimePodcasts(currentTimestamp, data.feed.entry);
   };
 
   useEffect(() => {
@@ -37,10 +38,10 @@ function Podcasts() {
         const currentTimestamp = new Date().getTime();
         getPodcasts(currentTimestamp);
         set_loading(false);
-      }, 300);
+      }, 150);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [lastFechtTimePodcasts]);
 
   const goToDetail = (podcastId, summary) => {
     if (state.podcastId === podcastId) {
@@ -52,21 +53,42 @@ function Podcasts() {
     }
   };
 
+  const handleSearch = (search) => {
+    setSearch(search);
+
+    const podcastFiltered = podcasts.filter(
+      (pod) =>
+        pod["im:name"].label
+          .toLocaleLowerCase()
+          .includes(search.toLocaleLowerCase()) ||
+        pod["im:artist"].label
+          .toLocaleLowerCase()
+          .includes(search.toLocaleLowerCase())
+    );
+
+    setAllPodcast(podcastFiltered);
+  };
+
   return (
     <div>
       {allPodcast ? (
         <>
           <div className={styles.searchContainer}>
             <p data-testid="total-podcasts" className={styles.count}>
-              {allPodcast.feed.entry.length}
+              {allPodcast.length}
             </p>
-            <input className={styles.search} placeholder="Filter podcasts" />
+            <input
+              className={styles.search}
+              placeholder="Filter podcasts"
+              onChange={(e) => handleSearch(e.target.value)}
+              value={search}
+            />
           </div>
           <div
-            key={`list-podcasts ${allPodcast.feed.entry.length}`}
+            key={`list-podcasts ${allPodcast.length}`}
             className={styles.container}
           >
-            {allPodcast.feed.entry.map((pod, index) => {
+            {allPodcast.map((pod, index) => {
               return (
                 <div key={`list-podcasts id-${index}`}>
                   <PodcastCard

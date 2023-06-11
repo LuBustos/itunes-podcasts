@@ -21,7 +21,6 @@ const columns = [
   },
 ];
 
-
 function AboutPodcast() {
   const state = useStore((state) => state);
   const params = useParams();
@@ -31,7 +30,9 @@ function AboutPodcast() {
 
   const getPodcastAbout = async (currentTimestamp) => {
     const data = await getData(
-      `https://itunes.apple.com/lookup?id=${params.id}&media=podcast&entity=podcastEpisode&limit=20`
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(
+        `https://itunes.apple.com/lookup?id=${params.id}&media=podcast&entity=podcastEpisode&limit=20`
+      )}`
     );
     setPodcastDetail(data);
     state.addLastFechTimePodcast(currentTimestamp, data);
@@ -43,16 +44,19 @@ function AboutPodcast() {
       navigate("/");
     }
 
-    if (!lastFechtTimePodcast || isTimeElapsed(lastFechtTimePodcast, 2 * 60 * 60 * 1000)) {
+    if (
+      !lastFechtTimePodcast ||
+      isTimeElapsed(lastFechtTimePodcast, 2 * 60 * 60 * 1000)
+    ) {
       set_loading(true);
       setTimeout(() => {
         const currentTimestamp = new Date().getTime();
         getPodcastAbout(currentTimestamp);
         set_loading(false);
-      }, 500);
+      }, 150);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.lastFechtTimePodcast]);
 
   const goToEpisode = (trackName, description, episodeUrl) => {
     state.addEpisode({
@@ -67,13 +71,13 @@ function AboutPodcast() {
     <div style={{ display: "flex", flexDirection: "row" }}>
       {podcastDetail ? (
         <>
-          <div style={{ width: "20%" }}>
+          <div style={{ width: "22%" }}>
             <PodcastDetail
               podcast={podcastDetail.results[0]}
               summary={state.summary}
             />
           </div>
-          <div style={{ width: "80%" }}>
+          <div style={{ width: "78%" }}>
             <Card>
               <p className={styles.total}>
                 Episodes: {podcastDetail.resultCount}
