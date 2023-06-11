@@ -13,6 +13,7 @@ jest.mock("../../hooks/useStore", () => ({
     set_summary: mockSetSummary,
     set_loading: jest.fn(),
     clear: jest.fn(),
+    addLastFechTimePodcasts: jest.fn(),
   })),
 }));
 
@@ -114,7 +115,7 @@ describe("Podcasts", () => {
     const podcast1 = screen.getByText("The Joe Budden Podcast");
     fireEvent.click(podcast1);
 
-    expect(mockSetSummary).toHaveBeenCalledWith("Summary 1");
+    expect(mockSetSummary).toHaveBeenCalledWith("Summary 1","1");
     expect(mockNavigate).toHaveBeenCalledWith("/podcast/1");
   });
 });

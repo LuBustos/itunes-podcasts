@@ -7,8 +7,8 @@ jest.mock("../../hooks/useStore", () => ({
   useStore: jest.fn((selector) => ({
     summary: "Podcast summary",
     lastFechtTime: null,
-    podcasts: null,
-    addLastFechTime: jest.fn(),
+    podcast: null,
+    addLastFechTimePodcast: jest.fn(),
     addEpisode: jest.fn(),
     set_loading: jest.fn(),
   })),

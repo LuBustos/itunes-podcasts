@@ -2,24 +2,35 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 const initialState = {
-  lastFechtTime: null,
+  podcastId: null,
+  lastFechtTimePodcast: null,
   loading: false,
   summary: "",
   podcast_title: "",
   podcast_description: "",
   song: "",
   podcast_detail: "",
+  podcast: null,
   podcasts: null,
+  lastFechtTimePodcasts: null,
 };
 
 export const useStore = create(
   persist(
     (set, get) => ({
       ...initialState,
-      set_summary: (summary) => set(() => ({ summary: summary })),
+      set_summary: (summary,podcastId) => set(() => ({ summary: summary, podcastId: podcastId })),
       set_loading: (loading) => set(() => ({ loading: loading })),
-      addLastFechTime: (last_fetch_time, podcasts) =>
-        set(() => ({ lastFechtTime: last_fetch_time, podcasts: podcasts })),
+      addLastFechTimePodcast: (last_fetch_time, podcast) =>
+        set(() => ({
+          lastFechtTimePodcast: last_fetch_time,
+          podcast: podcast,
+        })),
+      addLastFechTimePodcasts: (last_fetch_time, podcasts) =>
+        set(() => ({
+          lastFechtTimePodcasts: last_fetch_time,
+          podcasts: podcasts,
+        })),
       addEpisode: (episode) =>
         set(() => ({
           song: episode.song,
@@ -28,7 +39,16 @@ export const useStore = create(
           podcast_title: episode.title,
         })),
       clear: () => {
-        set(initialState);
+        set({
+          lastFechtTimePodcast: null,
+          loading: false,
+          summary: "",
+          podcast_title: "",
+          podcast_description: "",
+          song: "",
+          podcast_detail: "",
+          podcast: null,
+        });
       },
     }),
     {

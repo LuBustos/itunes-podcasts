@@ -24,7 +24,7 @@ describe('useStore', () => {
 
     expect(store.summary).toBe('');
     expect(store.loading).toBe(false);
-    expect(store.lastFechtTime).toBeNull();
+    expect(store.lastFechtTimePodcast).toBeNull();
   });
 
   test('set_summary', () => {
@@ -50,16 +50,31 @@ describe('useStore', () => {
 
   });
 
-  test('addLastFechTime', () => {
+  test('addLastFechTimePodcast', () => {
     const { result } = renderHook(() => useStore());
     const store = result.current;
 
     const date = new Date();
 
-    store.addLastFechTime(date,[]);
+    store.addLastFechTimePodcast(date,[]);
 
     setTimeout(() => {
-        expect(store.lastFechtTime).toBe(date);
+        expect(store.lastFechtTimePodcast).toBe(date);
+        expect(store.podcast).toBe([]);
+    },300)
+
+  });
+
+  test('addLastFechTimePodcasts', () => {
+    const { result } = renderHook(() => useStore());
+    const store = result.current;
+
+    const date = new Date();
+
+    store.addLastFechTimePodcasts(date,[]);
+
+    setTimeout(() => {
+        expect(store.lastFechtTimePodcasts).toBe(date);
         expect(store.podcasts).toBe([]);
     },300)
 

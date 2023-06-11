@@ -7,7 +7,7 @@ function Layout() {
   const { loading } = useStore((state) => state);
   const navigate = useNavigate();
   const goToHome = () => {
-    navigate("/");
+    navigate(-1);
   };
 
   return (

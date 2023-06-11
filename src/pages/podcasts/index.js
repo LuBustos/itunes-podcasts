@@ -1,57 +1,84 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { PodcastCard } from "../../components";
+import { useStore } from "../../hooks/useStore";
 import { getData } from "../../utils/getData";
 import styles from "./style.module.css";
-import { useStore } from "../../hooks/useStore";
-import { useNavigate } from "react-router-dom";
+import { isTimeElapsed } from "../../utils/isTime";
 
 function Podcasts() {
-  const { set_summary, set_loading, clear } = useStore((state) => state);
-  const [podcasts, setPodcasts] = useState(null);
+  const state = useStore((state) => state);
+  const {
+    set_summary,
+    set_loading,
+    clear,
+    addLastFechTimePodcasts,
+    lastFechtTimePodcasts,
+    podcasts,
+  } = state;
+  const [allPodcast, setAllPodcast] = useState(podcasts);
   const navigate = useNavigate();
 
-  const getPodcasts = async () => {
+  const getPodcasts = async (currentTimestamp) => {
     const data = await getData(
       "https://itunes.apple.com/us/rss/toppodcasts/limit=100/genre=1310/json"
     );
-    setPodcasts(data);
+    setAllPodcast(data);
+    addLastFechTimePodcasts(currentTimestamp, data);
   };
 
   useEffect(() => {
-    clear();
-
-    set_loading(true);
-    setTimeout(() => {
-      getPodcasts();
-      set_loading(false);
-    }, 300);
+    if (
+      !lastFechtTimePodcasts ||
+      isTimeElapsed(lastFechtTimePodcasts, 2 * 60 * 60 * 1000)
+    ) {
+      set_loading(true);
+      setTimeout(() => {
+        const currentTimestamp = new Date().getTime();
+        getPodcasts(currentTimestamp);
+        set_loading(false);
+      }, 300);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const goToDetail = (podcastId, summary) => {
-    set_summary(summary);
-    navigate(`/podcast/${podcastId}`);
+    if (state.podcastId === podcastId) {
+      navigate(`/podcast/${podcastId}`);
+    } else {
+      clear();
+      set_summary(summary, podcastId);
+      navigate(`/podcast/${podcastId}`);
+    }
   };
 
   return (
     <div>
-      {podcasts ? (
+      {allPodcast ? (
         <>
           <div className={styles.searchContainer}>
-            <p data-testid="total-podcasts" className={styles.count}>{podcasts.feed.entry.length}</p>
+            <p data-testid="total-podcasts" className={styles.count}>
+              {allPodcast.feed.entry.length}
+            </p>
             <input className={styles.search} placeholder="Filter podcasts" />
           </div>
-          <div key={`list-podcasts ${podcasts.feed.entry.length}`} className={styles.container}>
-            {podcasts.feed.entry.map((pod, index) => {
+          <div
+            key={`list-podcasts ${allPodcast.feed.entry.length}`}
+            className={styles.container}
+          >
+            {allPodcast.feed.entry.map((pod, index) => {
               return (
-                <PodcastCard
-                  image={pod["im:image"][0].label}
-                  title={pod["im:name"].label}
-                  subtitle={pod["im:artist"].label}
-                  index={index}
-                  podcastId={pod["id"].attributes["im:id"]}
-                  summary={pod.summary.label}
-                  onClick={goToDetail}
-                />
+                <div key={`list-podcasts id-${index}`}>
+                  <PodcastCard
+                    image={pod["im:image"][0].label}
+                    title={pod["im:name"].label}
+                    subtitle={pod["im:artist"].label}
+                    index={index}
+                    podcastId={pod["id"].attributes["im:id"]}
+                    summary={pod.summary.label}
+                    onClick={goToDetail}
+                  />
+                </div>
               );
             })}
           </div>

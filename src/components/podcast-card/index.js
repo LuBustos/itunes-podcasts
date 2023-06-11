@@ -11,12 +11,12 @@ function PodcastCard({
 }) {
   return (
     <div
-      id={`${title}-${index}`}
+      key={`${title}-${index}`}
       className={styles.card}
       onClick={() => onClick(podcastId, summary)}
     >
       <div className={styles.imageContainer}>
-        <img className={styles.image} src={image} />
+        <img className={styles.image} src={image} alt={title} />
       </div>
       <div className={styles.content}>
         <p className={styles.title}>{title}</p>

@@ -5,6 +5,7 @@ import { useStore } from "../../hooks/useStore";
 import { getData } from "../../utils/getData";
 import { millisToMinutesAndSeconds } from "../../utils/milisToMins";
 import styles from "./styles.module.css";
+import { isTimeElapsed } from "../../utils/isTime";
 const columns = [
   {
     id: 1,
@@ -20,40 +21,37 @@ const columns = [
   },
 ];
 
-const isTimeElapsed = (lastTime, interval) => {
-  const currentTime = new Date().getTime();
-  return currentTime - lastTime >= interval;
-};
 
 function AboutPodcast() {
   const state = useStore((state) => state);
   const params = useParams();
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const [podcastDetail, setPodcastDetail] = useState(state.podcasts);
+  const [podcastDetail, setPodcastDetail] = useState(state.podcast);
 
   const getPodcastAbout = async (currentTimestamp) => {
     const data = await getData(
       `https://itunes.apple.com/lookup?id=${params.id}&media=podcast&entity=podcastEpisode&limit=20`
     );
     setPodcastDetail(data);
-    state.addLastFechTime(currentTimestamp, data);
+    state.addLastFechTimePodcast(currentTimestamp, data);
   };
 
   useEffect(() => {
-    const { set_loading, summary, lastFechtTime } = state;
+    const { set_loading, summary, lastFechtTimePodcast } = state;
     if (summary.length === 0) {
       navigate("/");
     }
 
-    if (!lastFechtTime || isTimeElapsed(lastFechtTime, 2 * 60 * 60 * 1000)) {
+    if (!lastFechtTimePodcast || isTimeElapsed(lastFechtTimePodcast, 2 * 60 * 60 * 1000)) {
       set_loading(true);
       setTimeout(() => {
         const currentTimestamp = new Date().getTime();
         getPodcastAbout(currentTimestamp);
         set_loading(false);
-      }, 300);
+      }, 500);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const goToEpisode = (trackName, description, episodeUrl) => {
@@ -87,13 +85,11 @@ function AboutPodcast() {
                   <tr key={`id ${columns.length} - columns`}>
                     {columns.map((col, index) => {
                       return (
-                        <>
-                          <th key={`${col.name}-${index}`}>
-                            <div>
-                              <span>{col.name}</span>
-                            </div>
-                          </th>
-                        </>
+                        <th key={`${col.name}-${index}`}>
+                          <div>
+                            <span>{col.name}</span>
+                          </div>
+                        </th>
                       );
                     })}
                   </tr>
@@ -108,19 +104,21 @@ function AboutPodcast() {
                     );
                     return index > 0 ? (
                       <tr key={index}>
-                        <Link
-                          key={index + 1}
-                          onClick={() =>
-                            goToEpisode(
-                              det.trackName,
-                              det.description,
-                              det.episodeUrl
-                            )
-                          }
-                          to={`${pathname}/episode/${det.trackId}`}
-                        >
-                          <td>{det.trackName}</td>
-                        </Link>
+                        <td>
+                          <Link
+                            key={index + 1}
+                            onClick={() =>
+                              goToEpisode(
+                                det.trackName,
+                                det.description,
+                                det.episodeUrl
+                              )
+                            }
+                            to={`${pathname}/episode/${det.trackId}`}
+                          >
+                            {det.trackName}
+                          </Link>
+                        </td>
                         <td>{releaseDate}</td>
                         <td>{minutes}</td>
                       </tr>
