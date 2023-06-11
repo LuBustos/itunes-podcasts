@@ -41,7 +41,7 @@ const EpisodeId = () => {
             />
             <hr />
             <div style={{ marginTop: "10px" }}>
-              <audio src={song} controls className={styles.audio} />
+              <audio data-testid="episode-song" src={song} controls className={styles.audio} />
             </div>
           </div>
         </Card>

@@ -20,7 +20,6 @@ export const useStore = create(
       set_loading: (loading) => set(() => ({ loading: loading })),
       addLastFechTime: (last_fetch_time, podcasts) =>
         set(() => ({ lastFechtTime: last_fetch_time, podcasts: podcasts })),
-      addPodcasts: (podcasts) => set(() => ({ podcasts: podcasts })),
       addEpisode: (episode) =>
         set(() => ({
           song: episode.song,

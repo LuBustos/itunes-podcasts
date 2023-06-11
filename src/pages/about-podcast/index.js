@@ -25,7 +25,7 @@ const isTimeElapsed = (lastTime, interval) => {
   return currentTime - lastTime >= interval;
 };
 
-function PodcastId() {
+function AboutPodcast() {
   const state = useStore((state) => state);
   const params = useParams();
   const { pathname } = useLocation();
@@ -84,7 +84,7 @@ function PodcastId() {
             <Card>
               <table className={styles.grid}>
                 <thead>
-                  <tr>
+                  <tr key={`id ${columns.length} - columns`}>
                     {columns.map((col, index) => {
                       return (
                         <>
@@ -136,4 +136,4 @@ function PodcastId() {
   );
 }
 
-export default PodcastId;
+export default AboutPodcast;

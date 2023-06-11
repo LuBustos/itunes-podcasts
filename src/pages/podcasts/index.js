@@ -37,10 +37,10 @@ function Podcasts() {
       {podcasts ? (
         <>
           <div className={styles.searchContainer}>
-            <p className={styles.count}>{podcasts.feed.entry.length}</p>
+            <p data-testid="total-podcasts" className={styles.count}>{podcasts.feed.entry.length}</p>
             <input className={styles.search} placeholder="Filter podcasts" />
           </div>
-          <div className={styles.container}>
+          <div key={`list-podcasts ${podcasts.feed.entry.length}`} className={styles.container}>
             {podcasts.feed.entry.map((pod, index) => {
               return (
                 <PodcastCard
