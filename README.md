@@ -1,6 +1,6 @@
 # Itunes-podcasts
 ## Technologies
-Itunes-podcasts is created with:
+Itunes-podcasts was created with:
  *  zustand: "^4.3.8"
  *  axios: "^1.4.0"
  *  react: "^18.2.0"
